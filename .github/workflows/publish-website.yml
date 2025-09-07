@@ -1,20 +1,31 @@
-name: Build & Publish Website
+name: Build & Deploy Website
 
 on:
   push:
     branches: [ main ]
+    # 只在网站改动或工作流改动时触发（可选）
+    paths:
+      - 'site-src/**'
+      - '.github/workflows/publish-website.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write         # 必须：允许部署到 Pages
+  id-token: write      # 必须：OIDC 用于部署签名
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
 
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive
+          submodules: recursive   # 如果 site-src 使用了子模块
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -33,28 +44,35 @@ jobs:
         run: |
           npm ci || npm install
 
-      # 如需 Python 工具就解开
+      # 如需 Python（词云等），解开以下两步
       # - name: Setup Python
       #   uses: actions/setup-python@v5
       #   with:
       #     python-version: '3.11'
-      # - name: Install Python deps & run helpers
+      # - name: Run Python helpers
       #   working-directory: site-src
       #   run: |
       #     pip install -r requirements.txt
       #     python make_wordcloud.py || true
 
-      - name: Build Jekyll
+      - name: Build Jekyll (al-folio)
         working-directory: site-src
         run: |
-          bundle exec jekyll build --trace --verbose
+          bundle exec jekyll build -s . -d _site --trace --verbose
 
-      - name: Publish to gh-pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact to Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          publish_dir: site-src/_site
-          publish_branch: gh-pages
-          personal_token: ${{ secrets.PAGES_TOKEN }}
-          user_name: "github-actions[bot]"
-          user_email: "github-actions[bot]@users.noreply.github.com"
+          path: site-src/_site
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
