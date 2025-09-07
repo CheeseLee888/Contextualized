@@ -1,0 +1,60 @@
+name: Build & Publish Website
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          working-directory: site-src
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node deps
+        working-directory: site-src
+        run: |
+          npm ci || npm install
+
+      # 如需 Python 工具就解开
+      # - name: Setup Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: '3.11'
+      # - name: Install Python deps & run helpers
+      #   working-directory: site-src
+      #   run: |
+      #     pip install -r requirements.txt
+      #     python make_wordcloud.py || true
+
+      - name: Build Jekyll
+        working-directory: site-src
+        run: |
+          bundle exec jekyll build --trace --verbose
+
+      - name: Publish to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          publish_dir: site-src/_site
+          publish_branch: gh-pages
+          personal_token: ${{ secrets.PAGES_TOKEN }}
+          user_name: "github-actions[bot]"
+          user_email: "github-actions[bot]@users.noreply.github.com"
+
