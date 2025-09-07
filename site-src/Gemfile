@@ -20,6 +20,9 @@ group :jekyll_plugins do
     gem 'mini_racer'
     gem 'unicode_utils'
     gem 'webrick'
+    gem "observer"  # needed by citeproc-ruby / jekyll-scholar on Ruby >= 3.4
+    gem "logger"    # Ruby 3.5+ no longer includes logger by default
+
 end
 group :other_plugins do
     gem 'css_parser'
