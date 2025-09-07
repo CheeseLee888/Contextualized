@@ -2,7 +2,7 @@ name: Build & Deploy Website
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, web-merge ]
     # 只在网站改动或工作流改动时触发（可选）
     paths:
       - 'site-src/**'
