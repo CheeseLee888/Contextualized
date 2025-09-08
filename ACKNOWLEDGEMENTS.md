@@ -8,3 +8,4 @@ Thank you to everyone here for your impactful contributions!
 - Manolis Kellis
 - Eric Xing
 - Jason Miller
+- Peter Li
