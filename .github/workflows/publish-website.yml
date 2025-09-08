@@ -1,9 +1,9 @@
+---
 name: Build & Deploy Website
 
-on:
+'on':
   push:
-    branches: [ main, web-merge ]
-    # 只在网站改动或工作流改动时触发（可选）
+    branches: [main, web-merge]
     paths:
       - 'site-src/**'
       - '.github/workflows/publish-website.yml'
@@ -11,8 +11,8 @@ on:
 
 permissions:
   contents: read
-  pages: write         # 必须：允许部署到 Pages
-  id-token: write      # 必须：OIDC 用于部署签名
+  pages: write
+  id-token: write
 
 concurrency:
   group: 'pages'
@@ -25,44 +25,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive   # 如果 site-src 使用了子模块
+          submodules: recursive
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
-          bundler-cache: true
-          working-directory: site-src
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Node deps
+      - name: Ensure Bundler 2.5.7
         working-directory: site-src
         run: |
-          npm ci || npm install
+          gem install bundler:2.5.7
+          bundle _2.5.7_ --version
 
-      # 如需 Python（词云等），解开以下两步
-      # - name: Setup Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: '3.11'
-      # - name: Run Python helpers
-      #   working-directory: site-src
-      #   run: |
-      #     pip install -r requirements.txt
-      #     python make_wordcloud.py || true
-      - name: Install Jupyter
-  	run: |
-       	  python3 -m pip install --upgrade pip
-    	  python3 -m pip install jupyter
+      - name: Install Ruby gems
+        working-directory: site-src
+        run: |
+          bundle _2.5.7_ config set path 'vendor/bundle'
+          bundle _2.5.7_ install
+
+      - name: Install Jupyter (for jekyll-jupyter-notebook)
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install jupyter
+          jupyter --version
 
       - name: Build Jekyll (al-folio)
         working-directory: site-src
         run: |
-          bundle exec jekyll build -s . -d _site --trace --verbose
+          JEKYLL_ENV=production \
+            bundle _2.5.7_ exec jekyll build \
+            -d ./_site \
+            --trace --verbose
 
       - name: Upload artifact to Pages
         uses: actions/upload-pages-artifact@v3
@@ -71,12 +65,14 @@ jobs:
 
   deploy:
     needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
