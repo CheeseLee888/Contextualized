@@ -3,7 +3,7 @@ name: Build & Deploy Website
 
 'on':
   push:
-    branches: [main, web-merge]
+    branches: ["main"]
     paths:
       - 'site-src/**'
       - '.github/workflows/publish-website.yml'
