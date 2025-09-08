@@ -27,7 +27,7 @@ We’ve developed theory and methods to support this framework, including:
     <li>Personalized Gene Regulatory Networks {% cite ellington2025learning %}</li>
 </ul>
 Our open-source toolkit, <a href="https://contextualized.ml">
-      <img src="/assets/img/contextualized_logo.png" alt="ContextualizedML" width="30%"/>
+      <img src="{{ 'assets/img/contextualized_logo.png' | relative_url }}" alt="ContextualizedML" width="30%"/>
     </a>, supports model development and application across domains.
 </p>
 

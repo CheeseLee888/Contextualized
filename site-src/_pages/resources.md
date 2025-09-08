@@ -12,11 +12,11 @@ nav_order: 4
 - Context-Adaptive ML:
 
   - <a href="https://contextualized.ml">
-      <img src="/assets/img/contextualized_logo.png" alt="ContextualizedML" width="30%"/>
+      <img src="{{ 'assets/img/contextualized_logo.png' | relative_url }}" alt="ContextualizedML" width="30%"/>
     </a>: An SKLearn-style toolbox for estimating and analyzing models, distributions, and functions with context-specific parameters
 
 - <a href="http://fastlm.ai">
-    <img src="/assets/img/fastlm_logo.png" alt="FastLM" width="10%"/>
+    <img src="{{ 'assets/img/fastlm_logo.png' | relative_url }}" alt="FastLM" width="10%"/>
   </a>
   Tools for large-scale, distributed, parallel, sparsity in LMs. Includes:
 

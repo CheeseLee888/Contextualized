@@ -25,7 +25,7 @@ This work supports:
 - **Deployment-readiness** through faster, lower-latency models that retain contextual sensitivity.
 
 Recent work includes **FastCache**{% cite liu2025fastcache %}, **Memory-Keyed Attention**{% cite liu2025mka %}, **Pi-KV** {% cite liu2025pikv %}, and ongoing development of <a href="http://fastlm.ai">
-<img src="/assets/img/fastlm_logo.png" alt="FastLM" width="10%"/>
+<img src="{{ 'assets/img/fastlm_logo.png' | relative_url }}" alt="FastLM" width="10%"/>
 </a>, a framework for efficient, composable LLMs.
 
 <br /><br />
