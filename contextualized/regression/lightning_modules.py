@@ -26,8 +26,11 @@ from contextualized.regression.metamodels import (
     SubtypeMetamodel,
     MultitaskMetamodel,
     TasksplitMetamodel,
+    TasksplitUnivariateMetamodel,
     SINGLE_TASK_METAMODELS,
     MULTITASK_METAMODELS,
+    SINGLE_TASK_UNIVARIATE_METAMODELS,
+    MULTITASK_UNIVARIATE_METAMODELS,
 )
 from contextualized.regression.datasets import (
     DataIterable,
@@ -269,7 +272,6 @@ class NaiveContextualizedRegression(ContextualizedRegressionBase):
             context_dim,
             x_dim,
             y_dim,
-            univariate=False,
             encoder_type=encoder_type,
             width=width,
             layers=layers,
@@ -372,7 +374,6 @@ class ContextualizedRegression(ContextualizedRegressionBase):
             context_dim,
             x_dim,
             y_dim,
-            univariate=False,
             encoder_type=encoder_type,
             width=width,
             layers=layers,
@@ -481,7 +482,6 @@ class MultitaskContextualizedRegression(ContextualizedRegressionBase):
             context_dim,
             x_dim,
             y_dim,
-            univariate=False,
             encoder_type=encoder_type,
             width=width,
             layers=layers,
@@ -595,7 +595,6 @@ class TasksplitContextualizedRegression(ContextualizedRegressionBase):
             context_dim,
             x_dim,
             y_dim,
-            univariate=False,
             context_archetypes=context_archetypes,
             task_archetypes=task_archetypes,
             context_encoder_type=context_encoder_type,
@@ -700,11 +699,11 @@ class ContextualizedUnivariateRegression(ContextualizedRegression):
         :param **kwargs: Additional keyword arguments for the metamodel
 
         """
-        self.metamodel = SINGLE_TASK_METAMODELS[self.metamodel_type](
+        # Use explicit univariate metamodel mapping
+        self.metamodel = SINGLE_TASK_UNIVARIATE_METAMODELS[self.metamodel_type](
             context_dim,
             x_dim,
             y_dim,
-            univariate=True,
             encoder_type=encoder_type,
             width=width,
             layers=layers,
@@ -790,11 +789,11 @@ class TasksplitContextualizedUnivariateRegression(TasksplitContextualizedRegress
         :param task_link_fn: Link function to use for the task (default is identity)
 
         """
-        self.metamodel = TasksplitMetamodel(
+        # Use the explicit Tasksplit univariate metamodel
+        self.metamodel = TasksplitUnivariateMetamodel(
             context_dim,
             x_dim,
             y_dim,
-            univariate=True,
             context_archetypes=context_archetypes,
             task_archetypes=task_archetypes,
             context_encoder_type=context_encoder_type,
